@@ -192,7 +192,7 @@ const assistantGPTResponse = async (ctx, sysctx, conversationId) => {
           console.error("Error polling run status:", error);
         }
     
-        await delay(500); // Espera 500 ms antes de la próxima iteración
+        await delay(100); // Espera 500 ms antes de la próxima iteración
       }
     };
 

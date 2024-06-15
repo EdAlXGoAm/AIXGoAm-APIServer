@@ -22,6 +22,9 @@ app.use('/api/task', taskRoutes);
 const gpt4oRequestRoutes = require('./routes/gpt4oRequestRoutes');
 app.use('/api/gpt4o', gpt4oRequestRoutes);
 
+const whisperWordRoutes = require('./routes/whisperWordRoutes');
+app.use('/api/whisperWord', whisperWordRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });
