@@ -51,8 +51,8 @@ exports.request = (req, res) => {
 
         // Procesar el archivo convertido con Whisper para obtener la transcripción
         const transcript = await voiceToText(outputPath);
-        // Si transcript tiene la palabra Lindy
-        if (transcript.includes("Lindy")) {
+        // Si transcript tiene la palabra Luna
+        if (transcript.includes("Luna")) {
             
             console.log("transcript: ", transcript)
             const full_textInput = await fillMessageHeader(transcript, userName, phoneNumber, msgType, currentTime);
@@ -87,7 +87,7 @@ exports.request = (req, res) => {
             });
         } else {
             res.status(200).json({
-                transcript: "No Lindy detected in the audio"
+                transcript: "No Luna detected in the audio"
             });
         }
     } catch (error) {
