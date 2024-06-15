@@ -19,6 +19,9 @@ app.get('/', (req, res) => {
 const taskRoutes = require('./routes/taskRoutes');
 app.use('/api/task', taskRoutes);
 
+const gpt4oRequestRoutes = require('./routes/gpt4oRequestRoutes');
+app.use('/api/gpt4o', gpt4oRequestRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });
