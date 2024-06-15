@@ -51,36 +51,45 @@ exports.request = (req, res) => {
 
         // Procesar el archivo convertido con Whisper para obtener la transcripción
         const transcript = await voiceToText(outputPath);
+        // Si transcript tiene la palabra Lindy
+        if (transcript.includes("Lindy")) {
+            
+            console.log("transcript: ", transcript)
+            const full_textInput = await fillMessageHeader(transcript, userName, phoneNumber, msgType, currentTime);
 
-        const full_textInput = await fillMessageHeader(transcript, userName, phoneNumber, msgType, currentTime);
+            console.log("full_textInput: ", full_textInput)
+            const userMessage = { role: "user", body: full_textInput };
+            await saveMessage(chatId, conversationId, userMessage);
+            
+            // Usar la transcripción con chatGPTCompletion para obtener una respuesta
+            // const response = await chatGPTCompletion(full_textInput, '', []);
+            const response = await assistantGPTResponse( full_textInput, '', conversationId );
+            const responsePath = await textToSpeech(response);
 
-        const userMessage = { role: "user", body: full_textInput };
-        await saveMessage(chatId, conversationId, userMessage);
-        
-        // Usar la transcripción con chatGPTCompletion para obtener una respuesta
-        // const response = await chatGPTCompletion(full_textInput, '', []);
-        const response = await assistantGPTResponse( full_textInput, '', conversationId );
-        const responsePath = await textToSpeech(response);
+            const assistantMessage = { role: "assistant", body: response };
+            await saveMessage(chatId, conversationId, assistantMessage);
 
-        const assistantMessage = { role: "assistant", body: response };
-        await saveMessage(chatId, conversationId, assistantMessage);
+            // Leer el archivo de audio y enviarlo como respuesta
+            fs.readFile(responsePath, (err, data) => {
+                if (err) {
+                    console.error('Error reading audio file:', err);
+                    return res.status(500).json({ error: 'Internal Server Error' });
+                }
 
-        // Leer el archivo de audio y enviarlo como respuesta
-        fs.readFile(responsePath, (err, data) => {
-            if (err) {
-                console.error('Error reading audio file:', err);
-                return res.status(500).json({ error: 'Internal Server Error' });
-            }
-
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Content-Disposition', `attachment; filename=${path.basename(responsePath)}`);
-        
-        res.status(200).json({
-            transcript,
-            response,
-            audio: data.toString('base64')  // Enviar el archivo de audio como base64
-        });
-        });
+                res.setHeader('Content-Type', 'application/json');
+                res.setHeader('Content-Disposition', `attachment; filename=${path.basename(responsePath)}`);
+                
+                res.status(200).json({
+                    transcript,
+                    response,
+                    audio: data.toString('base64')  // Enviar el archivo de audio como base64
+                });
+            });
+        } else {
+            res.status(200).json({
+                transcript: "No Lindy detected in the audio"
+            });
+        }
     } catch (error) {
       console.error('Error processing request:', error);
       res.status(500).json({ error: 'Internal Server Error' });
