@@ -59,8 +59,11 @@ exports.request = (req, res) => {
         const userMessage = { role: "user", body: full_textInput };
         
         // Usar la transcripción con chatGPTCompletion para obtener una respuesta
-        // const response = await chatGPTCompletion(full_textInput, '', []);
-        const response = await assistantGPTResponse( full_textInput, '', conversationId );
+        const messageHistory = await getMessages(chatId, conversationId);
+        // adding the user message to the message history
+        messageHistory.push(userMessage);
+        const response = await chatGPTCompletion(full_textInput, '', messageHistory);
+        // const response = await assistantGPTResponse( full_textInput, '', conversationId );
         const full_textOutput = response.replace(/【[^】]*】/g, '');
         const responsePath = await textToSpeech(full_textOutput);
         
