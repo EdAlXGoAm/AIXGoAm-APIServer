@@ -59,14 +59,14 @@ exports.request = (req, res) => {
 
             console.log("full_textInput: ", full_textInput)
             const userMessage = { role: "user", body: full_textInput };
-            await saveMessage(chatId, conversationId, userMessage);
             
             // Usar la transcripción con chatGPTCompletion para obtener una respuesta
             // const response = await chatGPTCompletion(full_textInput, '', []);
             const response = await assistantGPTResponse( full_textInput, '', conversationId );
             const responsePath = await textToSpeech(response);
-
+            
             const assistantMessage = { role: "assistant", body: response };
+            await saveMessage(chatId, conversationId, userMessage);
             await saveMessage(chatId, conversationId, assistantMessage);
 
             // Leer el archivo de audio y enviarlo como respuesta
