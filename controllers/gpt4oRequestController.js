@@ -63,9 +63,10 @@ exports.request = (req, res) => {
             // Usar la transcripción con chatGPTCompletion para obtener una respuesta
             // const response = await chatGPTCompletion(full_textInput, '', []);
             const response = await assistantGPTResponse( full_textInput, '', conversationId );
-            const responsePath = await textToSpeech(response);
+            const full_textOutput = response.replace(/【[^】]*】/g, '');
+            const responsePath = await textToSpeech(full_textOutput);
             
-            const assistantMessage = { role: "assistant", body: response };
+            const assistantMessage = { role: "assistant", body: full_textOutput };
             await saveMessage(chatId, conversationId, userMessage);
             await saveMessage(chatId, conversationId, assistantMessage);
 
@@ -81,7 +82,7 @@ exports.request = (req, res) => {
                 
                 res.status(200).json({
                     transcript,
-                    response,
+                    full_textOutput,
                     audio: data.toString('base64')  // Enviar el archivo de audio como base64
                 });
             });
