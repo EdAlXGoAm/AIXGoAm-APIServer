@@ -44,13 +44,13 @@ exports.request = (req, res) => {
         const conversationId = await getLastConversationId(chatId);
         // Definir los paths de entrada y salida para la conversión
         const inputPath = file.path;
-        const outputPath = path.join('uploads', `${Date.now()}.mp3`);
+        // const outputPath = path.join('uploads', `${Date.now()}.mp3`);
 
         // Convertir el archivo WAV a MP3
-        await convertWavToMp3(inputPath, outputPath);
+        // await convertWavToMp3(inputPath, outputPath);
 
         // Procesar el archivo convertido con Whisper para obtener la transcripción
-        const transcript = await voiceToText(outputPath);
+        const transcript = await voiceToText(inputPath);
         // Si transcript tiene la palabra Luna
         console.log("transcript: ", transcript)
         const full_textInput = await fillMessageHeader(transcript, userName, phoneNumber, msgType, currentTime);
@@ -62,7 +62,8 @@ exports.request = (req, res) => {
         const messageHistory = await getMessages(chatId, conversationId);
         // adding the user message to the message history
         messageHistory.push(userMessage);
-        const response = await chatGPTCompletion(full_textInput, '', messageHistory);
+        const sys_prompt_filled = await fillSysPrompt();
+        const response = await chatGPTCompletion(full_textInput, sys_prompt_filled, messageHistory);
         // const response = await assistantGPTResponse( full_textInput, '', conversationId );
         const full_textOutput = response.replace(/【[^】]*】/g, '');
         const responsePath = await textToSpeech(full_textOutput);
