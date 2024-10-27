@@ -25,6 +25,9 @@ app.use('/api/gpt4o', gpt4oRequestRoutes);
 const whisperWordRoutes = require('./routes/whisperWordRoutes');
 app.use('/api/whisperWord', whisperWordRoutes);
 
+const caducidadRoutes = require('./routes/caducidadRoutes');
+app.use('/api/caducidad', caducidadRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });
