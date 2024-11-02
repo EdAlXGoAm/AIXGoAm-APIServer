@@ -31,6 +31,9 @@ app.use('/api/caducidad', caducidadRoutes);
 const estadoRoutes = require('./routes/estadoRoutes');
 app.use('/api/estado', estadoRoutes);
 
+const param_configRoutes = require('./routes/param_configRoutes');
+app.use('/api/param_config', param_configRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });
