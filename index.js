@@ -34,6 +34,9 @@ app.use('/api/estado', estadoRoutes);
 const param_configRoutes = require('./routes/param_configRoutes');
 app.use('/api/param_config', param_configRoutes);
 
+const articuloRoutes = require('./routes/articuloRoutes');
+app.use('/api/articulo', articuloRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });

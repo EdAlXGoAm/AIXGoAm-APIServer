@@ -2,11 +2,11 @@ const Param_config = require('../models/param_configModel');
 const Joi = require('joi');
 
 const param_configSchema = Joi.object({
-  amount_unit: Joi.string().allow('').required(),
-  weight_unit: Joi.string().allow('').required(),
-  volume_unit: Joi.string().allow('').required(),
-  preferred_unit: Joi.string().allow('').required(),
-  states_list: Joi.array().items(Joi.string()).allow('').required(),
+  amount_unit: Joi.string().allow('').optional(),
+  weight_unit: Joi.string().allow('').optional(),
+  volume_unit: Joi.string().allow('').optional(),
+  preferred_unit: Joi.string().allow('').optional(),
+  states_list: Joi.array().items(Joi.string()).allow('').optional(),
 });
 
 async function createParam_config(req, res) {
