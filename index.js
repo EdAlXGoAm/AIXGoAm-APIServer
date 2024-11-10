@@ -37,6 +37,12 @@ app.use('/api/param_config', param_configRoutes);
 const articuloRoutes = require('./routes/articuloRoutes');
 app.use('/api/articulo', articuloRoutes);
 
+const operationRoutes = require('./routes/operationRoutes');
+app.use('/api/operation', operationRoutes);
+
+const relatedOperationsRoutes = require('./routes/relatedOperationsRoutes');
+app.use('/api/relatedOperations', relatedOperationsRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });
