@@ -5,6 +5,7 @@ const port = 3010;
 
 app.use(cors());
 app.use(express.json());
+app.set('view engine', 'ejs');
 
 require("dotenv").config();
 
@@ -13,7 +14,11 @@ const MONGO_DB_URI = process.env.MONGO_DB_URI;
 mongoose.connect( MONGO_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true, } );
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  const impresiones = [
+    { id: 1, nombre: 'Modelo #1', descripcion: 'Arbol de Navidad: Plantilla para armar tu propio árbol de navidad', imagenUrl: 'https://i.imgur.com/wZ3Igwp.jpeg' },
+    // { id: 2, nombre: 'Modelo #2', descripcion: 'Arbol de Navidad', imagenUrl: 'https://i.imgur.com/wZ3Igwp.jpeg' }
+  ];
+  res.render('index', { impresiones });
 });
 
 const taskRoutes = require('./routes/taskRoutes');

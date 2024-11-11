@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Catálogo de Impresiones 3D</title>
+    <style>
+        .Title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            font-family: "Lato", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+        .Card {
+          border: 1px solid #000;
+          border-radius: 10px;
+          padding: 10px;
+          position: relative;
+        }
+        .Card-Header {
+            text-align: center;
+        }
+        .Card-Body {
+            text-align: center;
+        }
+        .Card-Footer {
+            text-align: center;
+        }
+        #catalogo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, auto);
+            gap: 10px;
+        }
+        .button {
+            background-color: #0070f3; 
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .Card-Image {
+            width: 50%;
+            height: auto;
+            padding-bottom: 40px;
+        }
+
+        /* Media query para dispositivos móviles */
+        @media (max-width: 768px) {
+            #catalogo {
+                grid-template-columns: 1fr; /* Una tarjeta por fila */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="Title">Bienvenido al Catálogo de Impresiones 3D</h1>
+    <div id="catalogo">
+        <% impresiones.forEach(function(impresion) { %>
+          <div class="Card">
+            <div class="Card-Header">
+                <h2><%= impresion.nombre %></h2>
+            </div>
+            <div class="Card-Body">
+                <p><%= impresion.descripcion %></p>
+                <img class="Card-Image" src="<%= impresion.imagenUrl %>" alt="<%= impresion.nombre %>">
+            </div>
+            <div class="Card-Footer">
+                <a class="button" href="https://wa.me/525535297152?text=Quiero%20la%20impresion%20%23<%= impresion.id %>%20del%20catalogo" target="_blank">Comprar</a>
+            </div>
+          </div>
+        <% }); %>
+    </div>
+</body>
+</html>
