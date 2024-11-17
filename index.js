@@ -48,6 +48,21 @@ app.use('/api/operation', operationRoutes);
 const relatedOperationsRoutes = require('./routes/relatedOperationsRoutes');
 app.use('/api/relatedOperations', relatedOperationsRoutes);
 
+const cartItemsRoutes = require('./routes/cartItemsRoutes');
+app.use('/api/cartItems', cartItemsRoutes);
+
+const inventoryItemsRoutes = require('./routes/inventoryItemsRoutes');
+app.use('/api/inventoryItems', inventoryItemsRoutes);
+
+const sourceRoutes = require('./routes/sourceRoutes');
+app.use('/api/source', sourceRoutes);
+
+const trackingItemsRoutes = require('./routes/trackingItemsRoutes');
+app.use('/api/trackingItems', trackingItemsRoutes);
+
+const purchaseItemStoryRoutes = require('./routes/purchaseItemStoryRoutes');
+app.use('/api/purchaseItemStory', purchaseItemStoryRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });

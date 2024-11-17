@@ -4,6 +4,7 @@ const Joi = require('joi');
 const relatedOperationSchema = Joi.object({
   date: Joi.date().required(),
   type: Joi.string().required(),
+  amountType: Joi.string().required(),
   name: Joi.string().required(),
   amount: Joi.number().required(),
   source: Joi.string().allow('').optional(),
@@ -12,6 +13,7 @@ const relatedOperationSchema = Joi.object({
 
 async function createRelatedOperation(req, res) {
   try {
+    console.log('req.body', req.body);
     const { error, value } = relatedOperationSchema.validate(req.body);
     console.log(value);
     if (error) {
