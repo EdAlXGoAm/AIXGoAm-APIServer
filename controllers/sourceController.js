@@ -46,6 +46,16 @@ async function getSources(req, res) {
   }
 }
 
+async function getSourceById(req, res) {
+  try {
+    const { id } = req.params;
+    const source = await Source.findById(id);
+    res.json(source);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
 async function updateSource(req, res) {
   try {
     const { id } = req.params;
@@ -87,4 +97,4 @@ async function deleteSource(req, res) {
   }
 }
 
-module.exports = { createSource, getSources, updateSource, deleteSource };
+module.exports = { createSource, getSources, getSourceById, updateSource, deleteSource };

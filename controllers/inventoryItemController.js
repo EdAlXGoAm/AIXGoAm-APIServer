@@ -45,6 +45,19 @@ async function getInventoryItems(req, res) {
   }
 }
 
+async function getInventoryItemById(req, res) {
+  try {
+    const { id } = req.params;
+    const inventoryItem = await InventoryItem.findById(id)
+      .populate({ path: 'idSource', model: Source })
+      .populate({ path: 'idParamConfig', model: ParamConfig });
+    res.json(inventoryItem);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+}
+
 async function updateInventoryItem(req, res) {
   try {
     const { id } = req.params;
@@ -74,4 +87,4 @@ async function deleteInventoryItem(req, res) {
   }
 }
 
-module.exports = { createInventoryItem, getInventoryItems, updateInventoryItem, deleteInventoryItem };
+module.exports = { createInventoryItem, getInventoryItems, getInventoryItemById, updateInventoryItem, deleteInventoryItem };

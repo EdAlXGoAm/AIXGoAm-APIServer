@@ -63,6 +63,9 @@ app.use('/api/trackingItems', trackingItemsRoutes);
 const purchaseItemStoryRoutes = require('./routes/purchaseItemStoryRoutes');
 app.use('/api/purchaseItemStory', purchaseItemStoryRoutes);
 
+const consumptionRoutes = require('./routes/consumptionRoutes');
+app.use('/api/consumption', consumptionRoutes);
+
 app.listen(port, () => {
   console.log(`Backend running at http://localhost:${port}`);
 });

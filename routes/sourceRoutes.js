@@ -4,6 +4,7 @@ const sourceController = require('../controllers/sourceController');
 
 router.post('/', sourceController.createSource);
 router.get('/', sourceController.getSources);
+router.get('/:id', sourceController.getSourceById);
 router.put('/:id', sourceController.updateSource);
 router.delete('/:id', sourceController.deleteSource);
 
