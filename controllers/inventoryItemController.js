@@ -26,7 +26,10 @@ async function createInventoryItem(req, res) {
     }
     const newInventoryItem = new InventoryItem(value);
     await newInventoryItem.save();
-    res.status(201).json(newInventoryItem);
+    const populatedInventoryItem = await InventoryItem.findById(newInventoryItem._id)
+      .populate({ path: 'idSource', model: Source })
+      .populate({ path: 'idParamConfig', model: ParamConfig });
+    res.status(201).json(populatedInventoryItem);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -41,7 +44,6 @@ async function getInventoryItems(req, res) {
     for (const inventoryItem of inventoryItems) {
       if (!inventoryItem.idParamConfig) {
         inventoryItem.idParamConfig = {};
-        console.log('inventoryItems cleaned for:', inventoryItem.name);
       }
     }
     res.json(inventoryItems);
@@ -69,7 +71,10 @@ async function updateInventoryItem(req, res) {
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
-    const updatedInventoryItem = await InventoryItem.findByIdAndUpdate(id, value, { new: true });
+    await InventoryItem.findByIdAndUpdate(id, value);
+    const updatedInventoryItem = await InventoryItem.findById(id)
+      .populate({ path: 'idSource', model: Source })
+      .populate({ path: 'idParamConfig', model: ParamConfig });
     res.json(updatedInventoryItem);
   } catch (err) {
     res.status(500).json({ error: err.message });
