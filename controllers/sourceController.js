@@ -19,16 +19,20 @@ async function createSource(req, res) {
   try {
     const { error, value } = sourceSchema.validate(req.body);
     if (error) {
+      console.log('error', error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newSource = new Source(value);
-    const populatedSource = await newSource.save()
+    await newSource.save();
+    const populatedSource = await Source.findById(newSource._id)
       .populate({ path: 'itemsCart', model: CartItem })
       .populate({ path: 'itemsTracking', model: TrackingItem })
       .populate({ path: 'itemsInventory', model: InventoryItem })
       .populate({ path: 'purchaseHistory', model: PurchaseItemStory });
-    res.status(201).json(populatedSource);
+    console.log('populatedSource', populatedSource);
+    res.json(populatedSource);
   } catch (err) {
+    console.log('err', err);
     res.status(500).json({ error: err.message });
   }
 }
