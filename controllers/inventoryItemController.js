@@ -1,7 +1,20 @@
 const InventoryItem = require('../models/inventoryItemModel');
 const Source = require('../models/sourceModel');
 const ParamConfig = require('../models/paramConfigModel');
+const sanitizeHtml = require('sanitize-html');
 const Joi = require('joi');
+
+const sanitizeOptions = {
+  allowedTags: [
+    'b', 'i', 'em', 'strong', 'u', 'strike', 'blockquote', 'p', 'br',
+    'ul', 'ol', 'li', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img'
+  ],
+  allowedAttributes: {
+    'a': ['href', 'name', 'target'],
+    'img': ['src', 'alt']
+  },
+  allowedSchemes: ['http', 'https', 'mailto', 'data']
+};
 
 const inventoryItemSchema = Joi.object({
   idSource: Joi.object().required(),
@@ -20,15 +33,22 @@ const inventoryItemSchema = Joi.object({
 
 async function createInventoryItem(req, res) {
   try {
+    if (req.body.description) {
+      req.body.description = sanitizeHtml(req.body.description, sanitizeOptions);
+    }
+
     const { error, value } = inventoryItemSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
+
     const newInventoryItem = new InventoryItem(value);
     await newInventoryItem.save();
+
     const populatedInventoryItem = await InventoryItem.findById(newInventoryItem._id)
       .populate({ path: 'idSource', model: Source })
       .populate({ path: 'idParamConfig', model: ParamConfig });
+
     res.status(201).json(populatedInventoryItem);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -67,15 +87,23 @@ async function getInventoryItemById(req, res) {
 async function updateInventoryItem(req, res) {
   try {
     const { id } = req.params;
+
+    if (req.body.description) {
+      req.body.description = sanitizeHtml(req.body.description, sanitizeOptions);
+    }
+
     const { error, value } = inventoryItemSchema.validate(req.body);
     if (error) {
       console.log('error', error);
       return res.status(400).json({ error: error.details[0].message });
     }
+
     await InventoryItem.findByIdAndUpdate(id, value);
+
     const updatedInventoryItem = await InventoryItem.findById(id)
       .populate({ path: 'idSource', model: Source })
       .populate({ path: 'idParamConfig', model: ParamConfig });
+
     res.json(updatedInventoryItem);
   } catch (err) {
     res.status(500).json({ error: err.message });
