@@ -22,8 +22,12 @@ async function createSource(req, res) {
       return res.status(400).json({ error: error.details[0].message });
     }
     const newSource = new Source(value);
-    await newSource.save();
-    res.status(201).json(newSource);
+    const populatedSource = await newSource.save()
+      .populate({ path: 'itemsCart', model: CartItem })
+      .populate({ path: 'itemsTracking', model: TrackingItem })
+      .populate({ path: 'itemsInventory', model: InventoryItem })
+      .populate({ path: 'purchaseHistory', model: PurchaseItemStory });
+    res.status(201).json(populatedSource);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -60,7 +64,13 @@ async function updateSource(req, res) {
       return res.status(400).json({ error: error.details[0].message });
     }
     await Source.findByIdAndUpdate(id, value);
-    res.status(200).json({ message: 'Source updated' });
+    const updatedSource = await Source.findById(id)
+      .populate({ path: 'itemsCart', model: CartItem })
+      .populate({ path: 'itemsTracking', model: TrackingItem })
+      .populate({ path: 'itemsInventory', model: InventoryItem })
+      .populate({ path: 'purchaseHistory', model: PurchaseItemStory });
+    console.log('updatedSource', updatedSource);
+    res.json(updatedSource);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
