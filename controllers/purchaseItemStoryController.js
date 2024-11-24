@@ -1,4 +1,8 @@
 const PurchaseItemStory = require('../models/purchaseItemStoryModel');
+const Source = require('../models/sourceModel');
+const InventoryItem = require('../models/inventoryItemModel');
+const Caducidad = require('../models/caducidadModel');
+const Consumption = require('../models/consumptionModel');
 const Joi = require('joi');
 
 const purchaseItemStorySchema = Joi.object({
@@ -31,22 +35,23 @@ const purchaseItemStorySchema = Joi.object({
   inventoryCategory4: Joi.string().allow('').optional(),
   inventoryCategory5: Joi.string().allow('').optional(),
   // ids consumption history
+  measurable: Joi.boolean().optional(),
+  measureType: Joi.string().allow('').optional(),
   idsConsumptionHistory: Joi.array().items(Joi.object()).optional(),
   leftQuantity: Joi.number().optional(),
+  status: Joi.string().allow('').optional(),
 });
 
 async function createPurchaseItemStory(req, res) {
   try {
     const { error, value } = purchaseItemStorySchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newPurchaseItemStory = new PurchaseItemStory(value);
     await newPurchaseItemStory.save();
     res.status(201).json(newPurchaseItemStory);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -54,14 +59,12 @@ async function createPurchaseItemStory(req, res) {
 async function getPurchaseItemStories(req, res) {
   try {
     const purchaseItemStories = await PurchaseItemStory.find()
-      .populate('idSource')
-      .populate('idInventoryItem')
-      .populate('copyInventoryItem')
-      .populate('idExpiration')
-      .populate('idsConsumptionHistory');
+      .populate({ path: 'idSource', model: Source })
+      .populate({ path: 'idInventoryItem', model: InventoryItem })
+      .populate({ path: 'idExpiration', model: Caducidad })
+      .populate({ path: 'idsConsumptionHistory', model: Consumption });
     res.json(purchaseItemStories);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -72,7 +75,6 @@ async function getPurchaseItemStoryById(req, res) {
     const purchaseItemStory = await PurchaseItemStory.findById(id);
     res.json(purchaseItemStory);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -82,13 +84,11 @@ async function updatePurchaseItemStory(req, res) {
     const { id } = req.params;
     const { error, value } = purchaseItemStorySchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const updatedPurchaseItemStory = await PurchaseItemStory.findByIdAndUpdate(id, value, { new: true });
     res.json(updatedPurchaseItemStory);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -96,10 +96,18 @@ async function updatePurchaseItemStory(req, res) {
 async function deletePurchaseItemStory(req, res) {
   try {
     const { id } = req.params;
+    const purchaseItemStory = await PurchaseItemStory.findById(id);
+    if (purchaseItemStory.idExpiration) {
+      await Caducidad.findByIdAndDelete(purchaseItemStory.idExpiration);
+    }
+    if (purchaseItemStory.idsConsumptionHistory) {
+      purchaseItemStory.idsConsumptionHistory.forEach(async (id) => {
+        await Consumption.findByIdAndDelete(id);
+      });
+    }
     await PurchaseItemStory.findByIdAndDelete(id);
     res.json({ message: 'PurchaseItemStory deleted' });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }

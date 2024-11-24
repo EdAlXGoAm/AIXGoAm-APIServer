@@ -30,6 +30,9 @@ app.use('/api/gpt4o', gpt4oRequestRoutes);
 const whisperWordRoutes = require('./routes/whisperWordRoutes');
 app.use('/api/whisperWord', whisperWordRoutes);
 
+const expenseRoutes = require('./routes/expenseRoutes');
+app.use('/api/expenses', expenseRoutes);
+
 const caducidadRoutes = require('./routes/caducidadRoutes');
 app.use('/api/caducidad', caducidadRoutes);
 

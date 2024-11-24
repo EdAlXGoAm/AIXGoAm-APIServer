@@ -5,16 +5,12 @@ const operationSchema = new mongoose.Schema({
   type: { type: String, required: true, enum: ['Ingreso', 'Gasto', 'Transferencia'] },
   name: { type: String, required: true },
   amount: { type: Number, required: true },
+  label: { type: String, required: true, enum: ['Ingreso', 'Compra', 'Adicional', 'Impuesto', 'Aportaciones', 'Prestamo'] },
   description: { type: String, required: false },
-  account: { type: String, required: false },
-  deferred: { type: Boolean, required: true },
-  installments: { type: Number, required: false },
-  preRelatedOperations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'RelatedOperation' }],
-  preAmount: { type: Number, required: true },
-  postRelatedOperations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'RelatedOperation' }],
-  postAmount: { type: Number, required: true },
-  operationAmount: { type: Number, required: true },
-  amountToShow: { type: String, required: true, enum: ['operationAmount', 'preAmount', 'postAmount'] },
+  accounts: { type: [String], required: false },
+  deferred: { type: [Boolean], required: true },
+  installments: { type: [Number], required: false },
+  items: { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }], required: false },
 });
 
 const Operation = mongoose.model('Operation', operationSchema, 'Operation');

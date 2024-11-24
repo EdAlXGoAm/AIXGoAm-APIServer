@@ -17,17 +17,14 @@ const sourceSchema = Joi.object({
 
 async function createSource(req, res) {
   try {
-    console.log('req', req.body)
     const { error, value } = sourceSchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newSource = new Source(value);
     await newSource.save();
     res.status(201).json(newSource);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -41,7 +38,6 @@ async function getSources(req, res) {
       .populate({ path: 'purchaseHistory', model: PurchaseItemStory });
     res.json(sources);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }

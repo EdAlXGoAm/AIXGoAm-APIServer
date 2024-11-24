@@ -7,30 +7,24 @@ const operationSchema = Joi.object({
   type: Joi.string().required().valid('Ingreso', 'Gasto', 'Transferencia'),
   name: Joi.string().required(),
   amount: Joi.number().required(),
+  label: Joi.string().required().valid('Ingreso', 'Compra', 'Adicional', 'Impuesto', 'Aportaciones'),
   description: Joi.string().allow('').optional(),
-  account: Joi.string().allow('').optional(),
-  deferred: Joi.boolean().required(),
-  installments: Joi.number().optional(),
-  preRelatedOperations: Joi.array().items(Joi.object().optional()),
-  preAmount: Joi.number().required(),
-  postRelatedOperations: Joi.array().items(Joi.object().optional()),
-  postAmount: Joi.number().required(),
-  operationAmount: Joi.number().required(),
-  amountToShow: Joi.string().required().valid('operationAmount', 'preAmount', 'postAmount'),
+  accounts: Joi.array().items(Joi.string()).optional(),
+  deferred: Joi.array().items(Joi.boolean()).required(),
+  installments: Joi.array().items(Joi.number()).optional(),
+  items: Joi.array().items(Joi.object().optional()),
 });
 
 async function createOperation(req, res) {
   try {
     const { error, value } = operationSchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newOperation = new Operation(value);
     await newOperation.save();
     res.status(201).json(newOperation);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -38,11 +32,9 @@ async function createOperation(req, res) {
 async function getOperations(req, res) {
   try {
     const operations = await Operation.find()
-      .populate({ path: 'preRelatedOperations', model: RelatedOperation })
-      .populate({ path: 'postRelatedOperations', model: RelatedOperation });
+      .populate({ path: 'items', model: Item });
     res.json(operations);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -65,13 +57,9 @@ async function deleteOperation(req, res) {
   try {
     const { id } = req.params;
     const operation = await Operation.findById(id)
-      .populate({ path: 'preRelatedOperations', model: RelatedOperation })
-      .populate({ path: 'postRelatedOperations', model: RelatedOperation });
-    await Promise.all(operation.preRelatedOperations.map(async (relatedOperation) => {
-      await RelatedOperation.findByIdAndDelete(relatedOperation._id);
-    }));
-    await Promise.all(operation.postRelatedOperations.map(async (relatedOperation) => {
-      await RelatedOperation.findByIdAndDelete(relatedOperation._id);
+      .populate({ path: 'items', model: Item });
+    await Promise.all(operation.items.map(async (item) => {
+      await Item.findByIdAndDelete(item._id);
     }));
     await Operation.findByIdAndDelete(id);
     res.status(200).json({ message: 'Operation deleted' });

@@ -19,14 +19,12 @@ async function createArticulo(req, res) {
   try {
     const { error, value } = articuloSchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newArticulo = new Articulo(value);
     await newArticulo.save();
     res.status(201).json(newArticulo);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }

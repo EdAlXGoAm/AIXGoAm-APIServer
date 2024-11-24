@@ -5,6 +5,7 @@ const param_configSchema = Joi.object({
   quantity_unit: Joi.string().allow('').optional(),
   weight_unit: Joi.string().allow('').optional(),
   volume_unit: Joi.string().allow('').optional(),
+  time_unit: Joi.string().allow('').optional(),
   default_unit: Joi.string().allow('').optional(),
   reference_unit: Joi.string().allow('').optional(),
   states_list: Joi.array().items(Joi.string()).allow('').optional(),
@@ -20,6 +21,7 @@ async function createParam_config(req, res) {
     await newParam_config.save();
     res.status(201).json(newParam_config);
   } catch (err) {
+    console.log('err', err);
     res.status(500).json({ error: err.message });
   }
 }

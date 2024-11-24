@@ -30,8 +30,11 @@ const purchaseItemStorySchema = new mongoose.Schema({
   inventoryCategory4: { type: String, required: false },
   inventoryCategory5: { type: String, required: false },
   // ids consumption history
+  measurable: { type: Boolean, required: false },
+  measureType: { type: String, required: false },
   idsConsumptionHistory: { type: [mongoose.Schema.Types.ObjectId], ref: 'Consumption', required: false },
   leftQuantity: { type: Number, required: false },
+  status: { type: String, required: false },
 });
 
 const PurchaseItemStory = mongoose.model('PurchaseItemStory', purchaseItemStorySchema, 'PurchaseItemStory');

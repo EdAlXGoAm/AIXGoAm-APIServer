@@ -13,14 +13,12 @@ async function createCartItem(req, res) {
   try {
     const { error, value } = cartItemSchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newCartItem = new CartItem(value);
     await newCartItem.save();
     res.status(201).json(newCartItem);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -30,7 +28,6 @@ async function getCartItems(req, res) {
     const cartItems = await CartItem.find();
     res.json(cartItems);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -45,7 +42,6 @@ async function updateCartItem(req, res) {
       await CartItem.findByIdAndUpdate(id, value);
       res.status(200).json({ message: 'Cart item updated' });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ error: err.message });
   }
 }
@@ -56,7 +52,6 @@ async function deleteCartItem(req, res) {
     await CartItem.findByIdAndDelete(id);
     res.status(200).json({ message: 'Cart item deleted' });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 

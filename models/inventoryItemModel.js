@@ -12,6 +12,7 @@ const inventoryItemSchema = new mongoose.Schema({
   quantity: { type: Number, required: false },
   weight: { type: Number, required: false },
   volume: { type: Number, required: false },
+  time: { type: Number, required: false },
 });
 
 const InventoryItem = mongoose.model('InventoryItem', inventoryItemSchema, 'InventoryItem');

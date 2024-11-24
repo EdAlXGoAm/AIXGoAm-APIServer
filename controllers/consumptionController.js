@@ -14,14 +14,12 @@ async function createConsumption(req, res) {
   try {
     const { error, value } = consumptionSchema.validate(req.body);
     if (error) {
-      console.log("error", error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newConsumption = new Consumption(value);
     await newConsumption.save();
     res.status(201).json(newConsumption);
   } catch (err) {
-    console.log("err", err);
     res.status(500).json({ error: err.message });
   }
 }

@@ -13,18 +13,14 @@ const relatedOperationSchema = Joi.object({
 
 async function createRelatedOperation(req, res) {
   try {
-    console.log('req.body', req.body);
     const { error, value } = relatedOperationSchema.validate(req.body);
-    console.log(value);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newRelatedOperation = new RelatedOperation(value);
     await newRelatedOperation.save();
     res.status(201).json(newRelatedOperation);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }

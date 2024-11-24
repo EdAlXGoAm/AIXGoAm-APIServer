@@ -15,20 +15,19 @@ const inventoryItemSchema = Joi.object({
   quantity: Joi.number().allow(null).optional(),
   weight: Joi.number().allow(null).optional(),
   volume: Joi.number().allow(null).optional(),
+  time: Joi.number().allow(null).optional(),
 });
 
 async function createInventoryItem(req, res) {
   try {
     const { error, value } = inventoryItemSchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const newInventoryItem = new InventoryItem(value);
     await newInventoryItem.save();
     res.status(201).json(newInventoryItem);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -37,10 +36,16 @@ async function getInventoryItems(req, res) {
   try {
     const inventoryItems = await InventoryItem.find()
       .populate({ path: 'idSource', model: Source })
-      .populate({ path: 'idParamConfig', model: ParamConfig });
+      .populate({ path: 'idParamConfig', model: ParamConfig })
+      .lean();
+    for (const inventoryItem of inventoryItems) {
+      if (!inventoryItem.idParamConfig) {
+        inventoryItem.idParamConfig = {};
+        console.log('inventoryItems cleaned for:', inventoryItem.name);
+      }
+    }
     res.json(inventoryItems);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -53,7 +58,6 @@ async function getInventoryItemById(req, res) {
       .populate({ path: 'idParamConfig', model: ParamConfig });
     res.json(inventoryItem);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -63,13 +67,11 @@ async function updateInventoryItem(req, res) {
     const { id } = req.params;
     const { error, value } = inventoryItemSchema.validate(req.body);
     if (error) {
-      console.log(error);
       return res.status(400).json({ error: error.details[0].message });
     }
     const updatedInventoryItem = await InventoryItem.findByIdAndUpdate(id, value, { new: true });
     res.json(updatedInventoryItem);
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
@@ -82,7 +84,6 @@ async function deleteInventoryItem(req, res) {
     await InventoryItem.findByIdAndDelete(id);
     res.status(200).json({ message: 'Inventory item deleted', inventoryItem });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ error: err.message });
   }
 }
